@@ -1,0 +1,3 @@
+module HasMetrics
+  VERSION = "0.0.1"
+end
