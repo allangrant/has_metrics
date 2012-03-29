@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "has_metrics"
   gem.require_paths = ["lib"]
   gem.version       = HasMetrics::VERSION
+  
+  gem.add_development_dependency("rake")
 end
