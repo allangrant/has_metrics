@@ -1,6 +1,6 @@
 # HasMetrics
 
-TODO: Write a gem description
+Calculates metrics on ActiveRecord entries and caches them.
 
 ## Installation
 
@@ -18,7 +18,14 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    has_metric :total_offer_count do
+      activities.by_action(:offer).count
+    end
+
+    has_metric :average_shares_per_offer, :type => :float do
+      total_share_count.to_f / total_offer_count
+    end
+
 
 ## Contributing
 
