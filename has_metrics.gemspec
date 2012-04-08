@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Allan Grant"]
   gem.email         = ["allan@allangrant.net"]
   gem.description   = %q{Memoization into activerecord.}
-  gem.summary       = %q{Calculate metrics on activerecord entries and cache them in a automagical table.}
+  gem.summary       = %q{Calculate "metrics" (any expensive methods) on ActiveRecord entries and memoize them to an automagical table.}
   gem.homepage      = "http://github.com/allangrant/has_metrics"
 
   gem.files         = `git ls-files`.split($\)
