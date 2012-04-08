@@ -62,9 +62,12 @@ module Metrics
       end
 
       (@metrics ||= []) << name.to_sym
-      unless metrics_class == self
-        has_custom_order_by name do |column, order|
-          { :joins => :metrics, :order => "#{reflect_on_association(:metrics).table_name}.#{column} #{order}" }
+
+      if respond_to?(:has_custom_order_by)  # TODO: carve out has_custom_order_by functionality into this gem
+        unless metrics_class == self
+          has_custom_order_by name do |column, order|
+            { :joins => :metrics, :order => "#{reflect_on_association(:metrics).table_name}.#{column} #{order}" }
+          end
         end
       end
       
@@ -79,7 +82,7 @@ module Metrics
     
     def metrics_column_type(column)
       case
-      when (column.to_s =~ /^by_(.+)$/) && respond_to?(:segment_categories) && segment_categories.include?($1.to_sym)
+      when (column.to_s =~ /^by_(.+)$/) && respond_to?(:segment_categories) && segment_categories.include?($1.to_sym) # TODO: carve out segementation functionality into this gem
         :string
       when (column.to_s =~ /_at$/)
         :datetime
@@ -91,20 +94,20 @@ module Metrics
     
     def update_all_metrics!(*args)
       metrics_class.migrate!
-      start_time = Time.zone.now
-      total = all.count
-      if caller.find {|c| c =~ /irb_binding/} # When called from irb
-        puts "Updating all metrics on #{name}: #{metrics.join(', ')}"
-        puts "Updating #{total} records."
-        progress_bar = ProgressBar.new("Progress", total)
-      end
-      for record in all(:order => "created_at desc")
+      # start_time = Time.zone.now
+      # total = all.count
+      # if caller.find {|c| c =~ /irb_binding/} # When called from irb
+      #   puts "Updating all metrics on #{name}: #{metrics.join(', ')}"
+      #   puts "Updating #{total} records."
+      #   progress_bar = ProgressBar.new("Progress", total)
+      # end
+      for record in all(:order => "id desc")
         record.update_metrics!(*args)
-        progress_bar.inc if progress_bar
+        # progress_bar.inc if progress_bar
       end
-      progress_bar.finish if progress_bar
-      elapsed = Time.zone.now - start_time
-      Notifier.deliver_simple_message('allan@curebit.com', '[CUREBIT] Metrics computation time', "Finished calculating #{metrics.count} metrics on #{total} #{name.underscore.humanize.downcase.pluralize} in #{elapsed/60} minutes (#{elapsed/total} sec per entry) (#{elapsed/(total*metrics.count)} sec per metric). \n\nMetrics calculated:\n\n#{metrics.join("\n")}")
+      # progress_bar.finish if progress_bar
+      # elapsed = Time.zone.now - start_time
+      # Notifier.deliver_simple_message('allan@curebit.com', '[CUREBIT] Metrics computation time', "Finished calculating #{metrics.count} metrics on #{total} #{name.underscore.humanize.downcase.pluralize} in #{elapsed/60} minutes (#{elapsed/total} sec per entry) (#{elapsed/(total*metrics.count)} sec per metric). \n\nMetrics calculated:\n\n#{metrics.join("\n")}")
       metrics
     end
   end
