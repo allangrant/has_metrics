@@ -93,7 +93,8 @@ module Metrics
         :datetime
       when @float_metrics && @float_metrics.include?(column)
         :float
-      else :integer
+      else
+        :integer
       end
     end
     

@@ -1,23 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + "/../test_helper")
 
-ActiveRecord::Base.establish_connection(:adapter => "sqlite3",
-  :database => File.expand_path(File.dirname(__FILE__) + "/../test.db"))
-
-class CreateTestTables < ActiveRecord::Migration
-  def self.up
-    create_table "users", :force => true do |t|
-      t.string   "name"
-    end
-    create_table "user_metrics", :force => true
-  end
-  
-  def self.down
-    drop_table "users"
-    drop_table "user_metrics"    
-  end
-end
-
-
 class User < ActiveRecord::Base
   include Metrics
   has_metric :name_length do
@@ -25,11 +7,10 @@ class User < ActiveRecord::Base
   end
 end
 
-
 class MetricsTest < Test::Unit::TestCase
   context "when defining metrics" do
     setup do
-      CreateTestTables.up
+      CreateTestTables.up(:user)
       @user = User.create(:name => "Fuzz")
       User.update_all_metrics!
     end
@@ -66,6 +47,5 @@ class MetricsTest < Test::Unit::TestCase
     should "have their values precomputed" do
       assert_equal({4=>1}, UserMetrics.count(:group => :name_length))
     end
-    
   end
 end
