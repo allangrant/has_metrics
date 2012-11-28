@@ -52,8 +52,13 @@ module Metrics
         else
           result = instance_exec(&block)
           result = nil if result.is_a?(Float) && !result.finite?
-          metrics.send "#{name}=", result
-          metrics.send "#{datestamp_column}=", Time.now
+          begin
+            metrics.send "#{name}=", result
+            metrics.send "#{datestamp_column}=", Time.now
+          rescue NoMethodError => e
+            raise e unless e.name == "#{name}=".to_sym
+            # This happens if the migrations haven't run yet for this metric. We should still calculate & return the metric.
+          end
           unless changed?
             metrics.save
           end
