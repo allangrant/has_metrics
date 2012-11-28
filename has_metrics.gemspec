@@ -4,7 +4,7 @@ require File.expand_path('../lib/has_metrics/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Allan Grant"]
   gem.email         = ["allan@allangrant.net"]
-  gem.description   = %q{Memoization into activerecord.}
+  gem.description   = %q{Calculate metrics and store them in the DB.}
   gem.summary       = %q{Calculate "metrics" (any expensive methods) on ActiveRecord entries and memoize them to an automagical table.}
   gem.homepage      = "http://github.com/allangrant/has_metrics"
 
@@ -15,9 +15,9 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = HasMetrics::VERSION
 
-  gem.add_dependency("activerecord")
-  gem.add_development_dependency("rake")
-  gem.add_development_dependency("shoulda")
-  # gem.add_development_dependency("mocha")
-  gem.add_development_dependency("sqlite3")
+  gem.add_dependency "activerecord"
+  gem.add_development_dependency "rake"
+  gem.add_development_dependency "shoulda"
+  gem.add_development_dependency "sqlite3"
+  gem.add_development_dependency "pry"
 end

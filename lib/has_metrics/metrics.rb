@@ -52,10 +52,10 @@ module Metrics
         else
           result = instance_exec(&block)
           result = nil if result.is_a?(Float) && !result.finite?
-          begin
-            metrics.update_attributes(name => result, datestamp_column => Time.zone.now)
-          rescue NoMethodError
-            # This happens if the migrations haven't run yet.  We should still calculate & return the metric.
+          metrics.send "#{name}=", result
+          metrics.send "#{datestamp_column}=", Time.now
+          unless changed?
+            metrics.save
           end
           result
         end

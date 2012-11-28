@@ -5,6 +5,7 @@ $:.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
 require 'shoulda'
 # require 'mocha'
-require 'activerecord'
+require 'active_record'
 require 'sqlite3'
 require 'has_metrics/metrics'
+require 'pry'

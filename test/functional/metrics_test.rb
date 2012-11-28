@@ -29,12 +29,9 @@ end
 class MetricsTest < Test::Unit::TestCase
   context "when defining metrics" do
     setup do
-      root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-      
       CreateTestTables.up
-      User.update_all_metrics!
-      @user_name =
       @user = User.create(:name => "Fuzz")
+      User.update_all_metrics!
     end
     
     should "create rows for the metrics" do
@@ -47,12 +44,28 @@ class MetricsTest < Test::Unit::TestCase
       assert_equal 16, @user.name_length_squared
     end
 
-    should "they should calculate their block when called" do
+    should "calculate their block when called" do
       assert_equal "Fuzz", @user.name
       assert_equal 4, @user.name_length
+
       @user.name = "Bib"
-      assert_equal 3, @user.name_length
+
+      # since 20 hours hasn't passed, the value is pulled from cache, not recalculated
+      assert_equal 4, @user.name_length
+      # (true) forces it to recalculate right away
+      assert_equal 3, @user.name_length(true)
+      
+      # since it wasn't saved, it's the same in the DB
       assert_equal 4, User.find_by_name("Fuzz").name_length
+      
+      @user.save
+      assert_equal 3, @user.name_length(true)
+      assert_equal 3, User.find_by_name("Bib").name_length      
     end
+    
+    should "have their values precomputed" do
+      assert_equal({4=>1}, UserMetrics.count(:group => :name_length))
+    end
+    
   end
 end
