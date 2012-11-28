@@ -145,7 +145,7 @@ module Metrics
         raise "Cannot determine if there were extra columns for has_metric when using the table itself for storing the metric!  Remove any columns manually"
         [] # We wont know what columns are excessive if the source changed
       else
-        (columns.map(&:name) - %w(id created_at updated_at)).map - required_columns   
+        (columns.map(&:name) - %w(id created_at updated_at)) - required_columns   
       end
       
     end
