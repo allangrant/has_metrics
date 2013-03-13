@@ -91,7 +91,7 @@ module Metrics
         :string
       when (column.to_s =~ /_at$/)
         :datetime
-      when @float_metrics && @float_metrics.include?(column)
+      when @float_metrics && @float_metrics.include?(column.to_sym)
         :float
       else
         :integer
