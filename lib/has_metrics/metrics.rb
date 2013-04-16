@@ -107,7 +107,8 @@ module Metrics
       #   puts "Updating #{total} records."
       #   progress_bar = ProgressBar.new("Progress", total)
       # end
-      for record in all(:order => "id desc")
+      find_each do |record|
+        # puts "Updating record ##{record.id}: #{record}"
         record.update_metrics!(*args)
         # progress_bar.inc if progress_bar
       end
