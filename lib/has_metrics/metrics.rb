@@ -54,7 +54,7 @@ module Metrics
           result = nil if result.is_a?(Float) && !result.finite?
           begin
             metrics.send "#{name}=", result
-            metrics.send "#{datestamp_column}=", Time.now
+            metrics.send "#{datestamp_column}=", Time.current
           rescue NoMethodError => e
             raise e unless e.name == "#{name}=".to_sym
             # This happens if the migrations haven't run yet for this metric. We should still calculate & return the metric.
@@ -107,9 +107,13 @@ module Metrics
       #   puts "Updating #{total} records."
       #   progress_bar = ProgressBar.new("Progress", total)
       # end
-      find_each do |record|
-        # puts "Updating record ##{record.id}: #{record}"
-        record.update_metrics!(*args)
+      find_in_batches do |batch|
+        metrics_class.transaction do
+          batch.each do |record|
+            # puts "Updating record ##{record.id}: #{record}"
+            record.update_metrics!(*args)
+          end
+        end
         # progress_bar.inc if progress_bar
       end
       # progress_bar.finish if progress_bar
